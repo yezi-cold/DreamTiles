@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2193632054730346820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4053564188360987562}
+  - component: {fileID: 405435710203368096}
+  - component: {fileID: 7793336381847731464}
+  - component: {fileID: 8728682107459921079}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4053564188360987562
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193632054730346820}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.7208524, y: 0.15482347, z: -0.1330743}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &405435710203368096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193632054730346820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cc8d15ebdb1ecf46b976e06730e13a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridRadius: 4
+  tileSize: 1
+  startTileData: {fileID: 11400000, guid: 96d08e16b26521b48a302e5fb46b4f4e, type: 2}
+--- !u!114 &7793336381847731464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193632054730346820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b839b27ecf3cbdb4b948ff950ee57f2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameCamera: {fileID: 0}
+  gridManager: {fileID: 405435710203368096}
+  defaultTileToPlace: {fileID: 11400000, guid: 96d08e16b26521b48a302e5fb46b4f4e, type: 2}
+--- !u!114 &8728682107459921079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193632054730346820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09efd47aac6ff5548b73e697f051c5fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileTypesInDeck:
+  - tileData: {fileID: 11400000, guid: 96d08e16b26521b48a302e5fb46b4f4e, type: 2}
+    amount: 20
+  - tileData: {fileID: 11400000, guid: 1c341518dba8c0c4e99a0150aabf506c, type: 2}
+    amount: 5
+  - tileData: {fileID: 11400000, guid: 1e9f23e65218bb34ba3730c3a6c0d4e8, type: 2}
+    amount: 5
+  inputManager: {fileID: 7793336381847731464}
