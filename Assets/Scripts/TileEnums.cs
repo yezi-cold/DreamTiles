@@ -8,3 +8,11 @@ public enum EdgeType
     Factory = 5,   // 工厂
     // 可以根据游戏需要添加更多类型
 }
+public enum TileType
+{
+    Grass,
+    Forest,
+    Water,
+    Mountain,
+    Village
+}

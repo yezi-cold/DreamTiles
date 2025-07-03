@@ -6,6 +6,8 @@ public class GridManager : MonoBehaviour
     [Header("Grid Settings")]
     [SerializeField] private int gridRadius = 4;
     [SerializeField] private float tileSize = 1.0f;
+    public float TileSize => tileSize; // <--- **新增这一行**
+
 
     // 不再直接引用hexTilePrefab，而是引用TileData，由TileData决定用哪个Prefab
     [Header("Initial Tile Data")]
@@ -26,12 +28,11 @@ public class GridManager : MonoBehaviour
         }
 
         // 游戏开始时，只在中心位置生成一个起始地块
-        SpawnTile(HexCoord.zero, startTileData); // HexCoord.zero 是我们之后要添加的，表示(0,0)
-        // GenerateGrid(); // 不再在Start时生成整个网格，而是动态放置
+        SpawnTile(HexCoord.zero, startTileData,0); // HexCoord.zero 是我们之后要添加的，表示(0,0)
     }
 
     // 修改 SpawnTile 方法以接受 TileData
-    public TileController SpawnTile(HexCoord coord, TileData tileData)
+    public TileController SpawnTile(HexCoord coord, TileData tileData, int rotationIndex)
     {
         if (tileData.tilePrefab == null)
         {
@@ -40,11 +41,11 @@ public class GridManager : MonoBehaviour
         }
 
         Vector3 worldPosition = HexToWorld(coord);
-
+        Quaternion worldRotation = Quaternion.Euler(0, rotationIndex * 60, 0);
         GameObject newTileGO = Instantiate(
             tileData.tilePrefab, // 使用TileData中定义的Prefab
             worldPosition,
-            Quaternion.identity,
+           worldRotation,
             this.transform
         );
 
@@ -56,8 +57,8 @@ public class GridManager : MonoBehaviour
             Destroy(newTileGO); // 销毁错误的实例
             return null;
         }
-        // *** 核心修改：在 Initialize 方法中添加 'this' (即 GridManager 自身的引用) ***
-        newTileController.Initialize(coord, tileData, this); //
+        // 关键修改：在 Initialize 方法中添加 'this' (即 GridManager 自身的引用)
+        newTileController.Initialize(coord, tileData, this);
 
         grid.Add(coord, newTileController);
         // *** 新增：计算并添加分数 ***
@@ -103,7 +104,6 @@ public class GridManager : MonoBehaviour
         return matchedCount;
     }
 
-    // ... HexToWorld 方法保持不变 ...
     public Vector3 HexToWorld(HexCoord coord)
     {
         float x = tileSize * (Mathf.Sqrt(3) * coord.Q + Mathf.Sqrt(3) / 2 * coord.R);
@@ -111,18 +111,15 @@ public class GridManager : MonoBehaviour
 
         return new Vector3(x, 0, z);
     }
-    // 核心转换函数：从世界坐标到六边形坐标
+
     public HexCoord WorldToHex(Vector3 worldPosition)
     {
-        // 这是世界坐标转轴向坐标系的标准公式 (适用于尖朝上六边形)
         float q = (worldPosition.x * Mathf.Sqrt(3) / 3 - worldPosition.z / 3) / tileSize;
         float r = (worldPosition.z * 2.0f / 3.0f) / tileSize;
 
-        // 进行四舍五入到最近的六边形坐标
         return HexRound(q, r);
     }
 
-    // 六边形坐标的四舍五入算法 (核心数学)
     private HexCoord HexRound(float q, float r)
     {
         float s = -q - r; // s 坐标
@@ -151,22 +148,21 @@ public class GridManager : MonoBehaviour
         return new HexCoord(rx, ry);
     }
 
-    // 添加一个方法来检查某个坐标是否已经有地块
     public bool HasTileAt(HexCoord coord)
     {
         return grid.ContainsKey(coord);
     }
 
-    // 添加一个方法来获取某个坐标的地块控制器
     public TileController GetTileAt(HexCoord coord)
     {
         grid.TryGetValue(coord, out TileController tile);
         return tile;
     }
 
-    // 获取所有已放置地块的坐标
+    // 新增方法：获取所有已放置地块的坐标
     public System.Collections.Generic.List<HexCoord> GetAllPlacedTileCoords()
     {
+        // 修正：使用正确的字典变量名 'grid'
         return new System.Collections.Generic.List<HexCoord>(grid.Keys);
     }
 }

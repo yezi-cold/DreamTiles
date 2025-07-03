@@ -64,6 +64,13 @@ MonoBehaviour:
   gameCamera: {fileID: 0}
   gridManager: {fileID: 405435710203368096}
   tileDeckManager: {fileID: 8728682107459921079}
+  validHexOutlineColor: {r: 0, g: 1, b: 0, a: 0.5}
+  invalidHexOutlineColor: {r: 1, g: 0, b: 0, a: 0.5}
+  ghostHexOutlinePrefab: {fileID: 7603452845465150078, guid: cdc92e4b8b8cc484b950ab63b8dbe8a9,
+    type: 3}
+  zoomSpeed: 5
+  minZoom: 2
+  maxZoom: 10
 --- !u!114 &8728682107459921079
 MonoBehaviour:
   m_ObjectHideFlags: 0

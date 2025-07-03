@@ -15,15 +15,16 @@ public class TileController : MonoBehaviour
     // 存储每个边缘的原始材质，以便在取消高亮时恢复
     private Material[] originalEdgeMaterials = new Material[6];
 
+    private GridManager gridManager;
+
+
     // 在 Initialize 方法中传入 GridManager 的引用，避免 FindObjectOfType 性能开销
     public void Initialize(HexCoord coords, TileData tileData, GridManager gridManager)
     {
-        Coords = coords;
-        TileData = tileData;
-        gameObject.name = $"Tile ({coords.Q}, {coords.R}) - {tileData.name}"; // 方便调试
+        this.Coords = coords;
+        this.TileData = tileData; // 存储TileData以备后用
+        this.gridManager = gridManager; // 存储对 GridManager 的引用
 
-        // 设置地块的世界位置，使用传入的 GridManager 引用
-        transform.position = gridManager.HexToWorld(Coords);
 
         // 首次初始化时保存所有边缘的原始材质
         for (int i = 0; i < 6; i++)

@@ -564,6 +564,11 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
         type: 3}
+      propertyPath: ghostTileValidColor.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
       propertyPath: validGhostTileColor.a
       value: 0.08627451
       objectReference: {fileID: 0}
@@ -584,6 +589,46 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
         type: 3}
+      propertyPath: validHexOutlineColor.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: validHexOutlineColor.b
+      value: 0.78113204
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: validHexOutlineColor.g
+      value: 0.78113204
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: validHexOutlineColor.r
+      value: 0.78113204
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: ghostTileInvalidColor.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: ghostTileInvalidColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: ghostTileInvalidColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: ghostTileInvalidColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
       propertyPath: invalidGhostTileColor.b
       value: 0.4509434
       objectReference: {fileID: 0}
@@ -596,6 +641,26 @@ PrefabInstance:
         type: 3}
       propertyPath: invalidGhostTileColor.r
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: invalidHexOutlineColor.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: invalidHexOutlineColor.b
+      value: 0.9924528
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: invalidHexOutlineColor.g
+      value: 0.9924528
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: invalidHexOutlineColor.r
+      value: 0.9924528
       objectReference: {fileID: 0}
     - target: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
         type: 3}
