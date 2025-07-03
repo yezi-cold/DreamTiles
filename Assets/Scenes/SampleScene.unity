@@ -159,7 +159,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -183,8 +183,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 4.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -208,13 +208,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 6.7, z: -4.3}
+  m_LocalRotation: {x: 0, y: 0.92387956, z: -0.38268343, w: 0}
+  m_LocalPosition: {x: 0, y: 4.82, z: 4.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 180, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -347,13 +347,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: -0.030018635, y: 0.81802946, z: -0.5727903, w: -0.04287106}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 70, y: 186, z: 0}
 --- !u!114 &410087042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -483,18 +483,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2002384518 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
-    type: 3}
-  m_PrefabInstance: {fileID: 9011556112695327630}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09efd47aac6ff5548b73e697f051c5fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &9011556112695327630
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -560,40 +548,91 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
         type: 3}
+      propertyPath: zoomSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
       propertyPath: gameCamera
       value: 
       objectReference: {fileID: 330585545}
     - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
         type: 3}
-      propertyPath: tileDeckManager
+      propertyPath: ghostHexOutlinePrefab
       value: 
-      objectReference: {fileID: 2002384518}
+      objectReference: {fileID: 7603452845465150078, guid: cdc92e4b8b8cc484b950ab63b8dbe8a9,
+        type: 3}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: validGhostTileColor.a
+      value: 0.08627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: validGhostTileColor.b
+      value: 0.8490566
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: validGhostTileColor.g
+      value: 0.8490566
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: validGhostTileColor.r
+      value: 0.8490566
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: invalidGhostTileColor.b
+      value: 0.4509434
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: invalidGhostTileColor.g
+      value: 0.4509434
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793336381847731464, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: invalidGhostTileColor.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
         type: 3}
       propertyPath: tileTypesInDeck.Array.size
-      value: 3
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: tileTypesInDeck.Array.data[0].amount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: tileTypesInDeck.Array.data[1].amount
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
+        type: 3}
+      propertyPath: tileTypesInDeck.Array.data[2].amount
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
         type: 3}
       propertyPath: tileTypesInDeck.Array.data[3].amount
-      value: 5
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
         type: 3}
-      propertyPath: tileTypesInDeck.Array.data[4].amount
-      value: 5
-      objectReference: {fileID: 0}
+      propertyPath: tileTypesInDeck.Array.data[0].tileData
+      value: 
+      objectReference: {fileID: 11400000, guid: 96d08e16b26521b48a302e5fb46b4f4e,
+        type: 2}
     - target: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
         type: 3}
       propertyPath: tileTypesInDeck.Array.data[3].tileData
       value: 
-      objectReference: {fileID: 11400000, guid: 1e9f23e65218bb34ba3730c3a6c0d4e8,
-        type: 2}
-    - target: {fileID: 8728682107459921079, guid: 625699a4dda898540bb2739717bec772,
-        type: 3}
-      propertyPath: tileTypesInDeck.Array.data[4].tileData
-      value: 
-      objectReference: {fileID: 11400000, guid: 1e9f23e65218bb34ba3730c3a6c0d4e8,
+      objectReference: {fileID: 11400000, guid: 07fdb1da469b88b4f9c6956decf80789,
         type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

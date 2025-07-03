@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8086aa2a94744b43b90439fda02567e, type: 3}
   m_Name: TD_Forest_Allside
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 5076930262411050175, guid: b34f6fa0671135f4ba8291dc8e3eeb88,
+  tilePrefab: {fileID: 5084257821948588410, guid: e009833c39a4ba84a99c588fa0575734,
     type: 3}
-  edges: 020000000200000002000000020000000200000002000000
+  edges: 010000000100000001000000010000000100000001000000
   baseScore: 1

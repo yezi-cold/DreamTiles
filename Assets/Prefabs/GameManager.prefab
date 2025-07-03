@@ -63,7 +63,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameCamera: {fileID: 0}
   gridManager: {fileID: 405435710203368096}
-  defaultTileToPlace: {fileID: 11400000, guid: 96d08e16b26521b48a302e5fb46b4f4e, type: 2}
+  tileDeckManager: {fileID: 8728682107459921079}
 --- !u!114 &8728682107459921079
 MonoBehaviour:
   m_ObjectHideFlags: 0

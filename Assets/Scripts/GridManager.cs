@@ -56,7 +56,8 @@ public class GridManager : MonoBehaviour
             Destroy(newTileGO); // 销毁错误的实例
             return null;
         }
-        newTileController.Initialize(coord, tileData);
+        // *** 核心修改：在 Initialize 方法中添加 'this' (即 GridManager 自身的引用) ***
+        newTileController.Initialize(coord, tileData, this); //
 
         grid.Add(coord, newTileController);
         // *** 新增：计算并添加分数 ***
@@ -66,12 +67,9 @@ public class GridManager : MonoBehaviour
             ScoreManager.Instance.ScoreTilePlacement(tileData, matchedEdges);
         }
 
-
-
-
         return newTileController; // 返回实例以便其他脚本使用
-
     }
+
     // *** 新增：辅助方法来计算放置地块时匹配的边数 ***
     private int CalculateMatchedEdges(HexCoord placedCoord, TileData placedTileData)
     {
@@ -104,6 +102,7 @@ public class GridManager : MonoBehaviour
         }
         return matchedCount;
     }
+
     // ... HexToWorld 方法保持不变 ...
     public Vector3 HexToWorld(HexCoord coord)
     {
@@ -112,7 +111,6 @@ public class GridManager : MonoBehaviour
 
         return new Vector3(x, 0, z);
     }
-    // 核心转换函数：从世界坐标到六边形坐标
     // 核心转换函数：从世界坐标到六边形坐标
     public HexCoord WorldToHex(Vector3 worldPosition)
     {
@@ -164,5 +162,11 @@ public class GridManager : MonoBehaviour
     {
         grid.TryGetValue(coord, out TileController tile);
         return tile;
+    }
+
+    // 获取所有已放置地块的坐标
+    public System.Collections.Generic.List<HexCoord> GetAllPlacedTileCoords()
+    {
+        return new System.Collections.Generic.List<HexCoord>(grid.Keys);
     }
 }
