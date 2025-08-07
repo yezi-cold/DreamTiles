@@ -21,20 +21,6 @@ public class TileDeckManager : MonoBehaviour
     public TileData CurrentHandTile => currentHandTile;
     public int RemainingTilesCount => deck.Count; // 用于UI显示
 
-    // 引用 InputManager，以便在抽取新牌时通知它
-    [SerializeField] private InputManager inputManager;
-
-    private void Awake()
-    {
-        if (inputManager == null)
-        {
-            inputManager = FindObjectOfType<InputManager>();
-            if (inputManager == null)
-            {
-                Debug.LogError("TileDeckManager: InputManager not found in scene!");
-            }
-        }
-    }
 
     void Start()
     {
@@ -76,23 +62,13 @@ public class TileDeckManager : MonoBehaviour
         if (deck.Count > 0)
         {
             currentHandTile = deck.Dequeue(); // 从牌堆顶部取出一张牌
-            Debug.Log($"Drew new tile: {currentHandTile.name}. Remaining: {deck.Count}");
+            GameManager.Instance.OnNewTileDrawn(currentHandTile);// 通知 GameManager 新牌已抽取
 
-            // 通知 InputManager 更新当前待放置的地块
-            if (inputManager != null)
-            {
-                inputManager.SetCurrentTileToPlace(currentHandTile);
-            }
         }
         else
         {
             currentHandTile = null; // 牌堆为空
-            Debug.Log("No more tiles left in the deck! Game Over (or end of round).");
-            // 未来在这里触发游戏结束逻辑
-            if (inputManager != null)
-            {
-                inputManager.SetCurrentTileToPlace(null); // 清空 InputManager 的当前牌
-            }
+            GameManager.Instance.OnNewTileDrawn(null);         
         }
     }
 

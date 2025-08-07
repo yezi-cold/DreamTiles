@@ -10,8 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4053564188360987562}
   - component: {fileID: 405435710203368096}
-  - component: {fileID: 7793336381847731464}
   - component: {fileID: 8728682107459921079}
+  - component: {fileID: 7637186602002992394}
+  - component: {fileID: 883446637451671442}
+  - component: {fileID: 6089792365012060034}
+  - component: {fileID: 6716190862370559950}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -49,28 +52,6 @@ MonoBehaviour:
   gridRadius: 4
   tileSize: 1
   startTileData: {fileID: 11400000, guid: 96d08e16b26521b48a302e5fb46b4f4e, type: 2}
---- !u!114 &7793336381847731464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2193632054730346820}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b839b27ecf3cbdb4b948ff950ee57f2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameCamera: {fileID: 0}
-  gridManager: {fileID: 405435710203368096}
-  tileDeckManager: {fileID: 8728682107459921079}
-  validHexOutlineColor: {r: 0, g: 1, b: 0, a: 0.5}
-  invalidHexOutlineColor: {r: 1, g: 0, b: 0, a: 0.5}
-  ghostHexOutlinePrefab: {fileID: 7603452845465150078, guid: cdc92e4b8b8cc484b950ab63b8dbe8a9,
-    type: 3}
-  zoomSpeed: 5
-  minZoom: 2
-  maxZoom: 10
 --- !u!114 &8728682107459921079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,4 +71,64 @@ MonoBehaviour:
     amount: 5
   - tileData: {fileID: 11400000, guid: 1e9f23e65218bb34ba3730c3a6c0d4e8, type: 2}
     amount: 5
-  inputManager: {fileID: 7793336381847731464}
+--- !u!114 &7637186602002992394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193632054730346820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b839b27ecf3cbdb4b948ff950ee57f2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilePlacer: {fileID: 883446637451671442}
+--- !u!114 &883446637451671442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193632054730346820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c57a465ffd16bd408acf984ded48c70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridManager: {fileID: 405435710203368096}
+  gameCamera: {fileID: 0}
+  ghostHexOutlinePrefab: {fileID: 7603452845465150078, guid: e398398b995386d44b621ee692d21a42,
+    type: 3}
+  validHexOutlineColor: {r: 0, g: 1, b: 0, a: 0.5}
+  invalidHexOutlineColor: {r: 1, g: 0, b: 0, a: 0.5}
+--- !u!114 &6089792365012060034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193632054730346820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ebc154602045e84587001146f9011b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridManager: {fileID: 405435710203368096}
+  tilePlacer: {fileID: 883446637451671442}
+  tileDeckManager: {fileID: 8728682107459921079}
+  scoreManager: {fileID: 6716190862370559950}
+--- !u!114 &6716190862370559950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193632054730346820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49d83c7f09b31694689bd69997835c27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basePlacementScore: 10
+  perfectMatchBonus: 5

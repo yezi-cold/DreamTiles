@@ -7,7 +7,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int gridRadius = 4;
     [SerializeField] private float tileSize = 1.0f;
     public float TileSize => tileSize; // <--- **新增这一行**
-
+    private GridManager gridManager;
 
     // 不再直接引用hexTilePrefab，而是引用TileData，由TileData决定用哪个Prefab
     [Header("Initial Tile Data")]
@@ -28,7 +28,7 @@ public class GridManager : MonoBehaviour
         }
 
         // 游戏开始时，只在中心位置生成一个起始地块
-        SpawnTile(HexCoord.zero, startTileData,0); // HexCoord.zero 是我们之后要添加的，表示(0,0)
+        SpawnTile(HexCoord.zero, startTileData, 0); // HexCoord.zero 是我们之后要添加的，表示(0,0)
     }
 
     // 修改 SpawnTile 方法以接受 TileData
@@ -61,14 +61,16 @@ public class GridManager : MonoBehaviour
         newTileController.Initialize(coord, tileData, this);
 
         grid.Add(coord, newTileController);
-        // *** 新增：计算并添加分数 ***
-        if (ScoreManager.Instance != null)
-        {
-            int matchedEdges = CalculateMatchedEdges(coord, tileData); // 调用新的辅助方法来计算匹配边数
-            ScoreManager.Instance.ScoreTilePlacement(tileData, matchedEdges);
-        }
-
+        //***新增：计算并添加分数 * **
+        //if (ScoreManager.Instance != null)
+        //{
+        //    int matchedEdges = CalculateMatchedEdges(coord, tileData); // 调用新的辅助方法来计算匹配边数
+        //    ScoreManager.Instance.ScoreTilePlacement(tileData, matchedEdges);
+        //}
+        int matchedEdges = CalculateMatchedEdges(coord, tileData);
+        GameManager.Instance.OnTilePlaced(coord, tileData, matchedEdges);
         return newTileController; // 返回实例以便其他脚本使用
+
     }
 
     // *** 新增：辅助方法来计算放置地块时匹配的边数 ***
@@ -164,5 +166,79 @@ public class GridManager : MonoBehaviour
     {
         // 修正：使用正确的字典变量名 'grid'
         return new System.Collections.Generic.List<HexCoord>(grid.Keys);
+    }
+    public bool CanPlaceTile(HexCoord targetCoord, TileData tileToPlace)
+    {
+        // 规则1：目标位置不能已有地块
+        if (HasTileAt(targetCoord))
+        {
+            return false;
+        }
+
+        // 防御性检查：确保传入的 tileToPlace 不是 null
+        if (tileToPlace == null)
+        {
+            Debug.LogError("CanPlaceTile 方法被调用，但传入的 tileToPlace 是空的！已中断操作。");
+            return false;
+        }
+
+        // 规则2：检查是否是第一个地块
+        var allPlacedTiles = GetAllPlacedTileCoords();
+        if (allPlacedTiles.Count == 0)
+        {
+            return targetCoord == HexCoord.zero;
+        }
+
+        // 规则3：检查是否与现有地块相邻
+        bool hasAdjacentTile = false;
+        for (int i = 0; i < 6; i++)
+        {
+            if (HasTileAt(targetCoord.GetNeighbor(i)))
+            {
+                hasAdjacentTile = true;
+                break;
+            }
+        }
+        if (!hasAdjacentTile)
+        {
+            return false;
+        }
+
+        // 规则4：检查所有相邻的边是否匹配
+        for (int i = 0; i < 6; i++)
+        {
+            HexCoord neighborCoord = targetCoord.GetNeighbor(i);
+            if (HasTileAt(neighborCoord))
+            {
+                TileController neighborTile = GetTileAt(neighborCoord);
+
+                // ---【核心修正：增加健壮性检查】---
+                if (neighborTile == null)
+                {
+                    Debug.LogError($"网格数据出现矛盾：坐标 {neighborCoord} 显示有地块，但无法获取其实例！");
+                    continue; // 跳过这个有问题的邻居
+                }
+                if (neighborTile.TileData == null)
+                {
+                    Debug.LogError($"位于坐标 {neighborCoord} 的地块没有关联的 TileData！请检查其初始化过程。");
+                    continue; // 跳过这个有问题的邻居
+                }
+                // ---【检查结束】---
+
+                EdgeType newTileEdge = tileToPlace.edges[i];
+                EdgeType neighborOppositeEdge = neighborTile.GetOppositeEdgeType((HexDirection)i);
+
+                if (newTileEdge != EdgeType.None && neighborOppositeEdge != EdgeType.None)
+                {
+                    if (newTileEdge != neighborOppositeEdge)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        // 所有规则都通过
+        return true;
     }
 }

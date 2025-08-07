@@ -1,5 +1,26 @@
 using UnityEngine;
 
+// 将枚举定义移到这里，因为它们与TileData紧密相关
+public enum EdgeType
+{
+    None = 0,
+    Grass = 1,
+    Forest = 2,
+    Water = 3,
+    House = 4,
+    Factory = 5,
+}
+
+public enum TileType
+{
+    Grass,
+    Forest,
+    Water,
+    Mountain,
+    Village
+}
+
+
 [CreateAssetMenu(fileName = "NewTileData", menuName = "Tile System/Tile Data")]
 public class TileData : ScriptableObject
 {

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8086aa2a94744b43b90439fda02567e, type: 3}
   m_Name: TD_House_AllSide
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 1917633863328216918, guid: 407d793305025a841b770f3d244957bc,
+  tilePrefab: {fileID: 1917633863328216918, guid: 27e35262dee61d94191d80c620f03ae1,
     type: 3}
-  edges: 010000000100000001000000010000000100000001000000
+  tileType: 0
   baseScore: 1
+  edges: 010000000100000001000000010000000100000001000000
