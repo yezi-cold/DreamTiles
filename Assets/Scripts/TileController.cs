@@ -1,85 +1,82 @@
 using UnityEngine;
 using System.Collections.Generic; // 需要这个命名空间
 
+//地块控制脚本
 public class TileController : MonoBehaviour
 {
-    public HexCoord Coords { get; private set; } // 该地块的六边形坐标
-    public TileData TileData { get; private set; } // 该地块的数据定义
+    //--属性--
+    public HexCoord Coords { get; private set; } // 公共属性，存储地块坐标。{ get; private set; } 表示外部只能读取，只有这个类内部可以设置
+    public TileData TileData { get; private set; } // 公共属性，存储地块的数据资源
 
-    // 存储六个边缘的 MeshRenderer 引用。需要在 Unity Inspector 中手动赋值。
+    //--字段--
+    // 私有数组，存储六个边缘游戏对象的MeshRenderer组件，用于改变材质（高亮）。
     [SerializeField] private MeshRenderer[] edgeRenderers = new MeshRenderer[6];
 
-    // 用于高亮的材质。需要在 Unity Inspector 中拖入发光材质。
+    //  私有字段，存储用于高亮的材质。
     [SerializeField] private Material highlightMaterial;
-
-    // 存储每个边缘的原始材质，以便在取消高亮时恢复
+    // 私有数组，用于备份边缘的原始材质，以便取消高亮时恢复。
     private Material[] originalEdgeMaterials = new Material[6];
-
+    //私有字段，存储对 GridManager 的引用
     private GridManager gridManager;
 
-
-    // 在 Initialize 方法中传入 GridManager 的引用，避免 FindObjectOfType 性能开销
+    //--方法--
+    // 初始化方法，传入坐标、数据资源、GridManager引用
     public void Initialize(HexCoord coords, TileData tileData, GridManager gridManager)
     {
-        this.Coords = coords;
-        this.TileData = tileData; // 存储TileData以备后用
+        this.Coords = coords;//设置当前地块的坐标
+        this.TileData = tileData; // 存储传入的地块数据
         this.gridManager = gridManager; // 存储对 GridManager 的引用
 
-
-        // 首次初始化时保存所有边缘的原始材质
-        for (int i = 0; i < 6; i++)
+        //--局部变量--
+        // for循环种的i是一个局部变量，只在循环内有效
+        for (int i = 0; i < 6; i++)//循环六次，处理每个边缘
         {
             if (edgeRenderers[i] != null)
             {
-                // 使用 sharedMaterial 避免创建新实例，影响性能
+                // 保存原始材质，使用 sharedMaterial 避免创建新实例，影响性能
                 originalEdgeMaterials[i] = edgeRenderers[i].sharedMaterial;
             }
             else
             {
+                //如果没有指定，打印警告信息，帮助调试
                 Debug.LogWarning($"TileController on {gameObject.name}: Edge Renderer at index {i} is not assigned!");
             }
         }
     }
 
-    /// <summary>
-    /// 获取指定方向的边缘类型。
-    /// </summary>
-    /// <param name="direction">要获取的六边形方向。</param>
-    /// <returns>该方向的边缘类型。</returns>
+    // 获取指定方向的边缘类型。
     public EdgeType GetEdgeType(HexDirection direction)
     {
+        //先检查tiledata是否存在，以及方向索引是否在有效的数组范围内
         if (TileData != null && (int)direction >= 0 && (int)direction < TileData.edges.Length)
         {
+            //从tiledata中edges数组种返回对应方向的边缘类型
             return TileData.edges[(int)direction];
         }
-        return EdgeType.None; // 默认返回 None
+        return EdgeType.None; // 如果有任何问题，返回none
     }
 
-    /// <summary>
-    /// 获取与指定方向相反的边缘类型。
-    /// </summary>
-    /// <param name="direction">当前方向。</param>
-    /// <returns>相反方向的边缘类型。</returns>
+    //获取与指定方向‘相反’的边缘类型。
     public EdgeType GetOppositeEdgeType(HexDirection direction)
     {
-        HexDirection oppositeDir = (HexDirection)(((int)direction + 3) % 6); // 相对方向总是 +3
+        //局部变量，计算反方向的索引，六边形网格种，相对方向总是 +3
+        HexDirection oppositeDir = (HexDirection)(((int)direction + 3) % 6); 
+        //调用自己的 GetEdgeType 方法来获取相反方向的边缘类型，并返回
         return GetEdgeType(oppositeDir);
     }
 
-    /// <summary>
-    /// 设置指定方向边缘的高亮状态。
-    /// </summary>
-    /// <param name="direction">要高亮的边缘方向。</param>
-    /// <param name="highlight">是否高亮。</param>
+    // 设置指定方向的边缘高亮状态。
     public void SetEdgeHighlight(HexDirection direction, bool highlight)
     {
-        int index = (int)direction;
+        int index = (int)direction;//将方向枚举转换为整数索引
+        //确保索引有效且对应的renderer已经在inspector种设置
         if (index >= 0 && index < edgeRenderers.Length && edgeRenderers[index] != null)
         {
+            //如果是要求高亮，并且高亮的材质已经设置
             if (highlight && highlightMaterial != null)
             {
-                // 注意：这里使用 .material 会创建材质实例，可能增加 Draw Call。
-                // 对于大量高亮，可以考虑使用 MaterialPropertyBlock。
+                // 将边缘的材质设置为高亮材质。
+                // 注意：使用 .material 会为该对象创建一个新的材质实例
                 edgeRenderers[index].material = highlightMaterial;
             }
             else
@@ -92,14 +89,12 @@ public class TileController : MonoBehaviour
             }
         }
     }
-
-    /// <summary>
-    /// 清除所有边缘的高亮状态，恢复原始材质。
-    /// </summary>
+    //清除所有边缘的高亮状态
     public void ClearAllEdgeHighlights()
     {
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 6; i++)//循环六次，处理每个边缘
         {
+            // 调用 SetEdgeHighlight 方法，将每个边缘的高亮状态都设置为 false。
             SetEdgeHighlight((HexDirection)i, false);
         }
     }

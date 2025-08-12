@@ -575,6 +575,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
         type: 3}
+      propertyPath: tileTypesInDeck.Array.data[0].amount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
+        type: 3}
       propertyPath: tileTypesInDeck.Array.data[3].amount
       value: 5
       objectReference: {fileID: 0}

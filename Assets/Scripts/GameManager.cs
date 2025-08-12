@@ -1,10 +1,15 @@
 using UnityEngine;
-
+/*游戏总管理器脚本
+ * 负责协调各个子系统之间的通信。整体功能: 使用单例模式，让自己成为一个全局唯一的协调者。
+ * 它监听来自一个管理器（如GridManager）的事件，然后向另一个管理器（如ScoreManager或TileDeckManager）发出指令。
+ * 这使得各个子系统之间不需要互相直接引用，降低了耦合度，让项目结构更清晰*/
 public class GameManager : MonoBehaviour
 {
+    //--单例--
     public static GameManager Instance { get; private set; }
 
-    // 引用所有的子系统/管理器
+    //--字段--
+    // 引用所有的子系统/管理器，这些都需要在unity inspector中手动拖拽赋值
     [SerializeField] private GridManager gridManager;
     [SerializeField] private TilePlacer tilePlacer;
     [SerializeField] private TileDeckManager tileDeckManager;
