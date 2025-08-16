@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 1cf6f4c6e6e0518419839d3f5448dd99, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -571,24 +571,51 @@ PrefabInstance:
     - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
         type: 3}
       propertyPath: tileTypesInDeck.Array.size
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
         type: 3}
       propertyPath: tileTypesInDeck.Array.data[0].amount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
-        type: 3}
-      propertyPath: tileTypesInDeck.Array.data[3].amount
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
         type: 3}
-      propertyPath: tileTypesInDeck.Array.data[3].tileData
+      propertyPath: tileTypesInDeck.Array.data[1].amount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
+        type: 3}
+      propertyPath: tileTypesInDeck.Array.data[2].amount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
+        type: 3}
+      propertyPath: tileTypesInDeck.Array.data[3].amount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
+        type: 3}
+      propertyPath: tileTypesInDeck.Array.data[0].tileData
+      value: 
+      objectReference: {fileID: 11400000, guid: 1c341518dba8c0c4e99a0150aabf506c,
+        type: 2}
+    - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
+        type: 3}
+      propertyPath: tileTypesInDeck.Array.data[1].tileData
+      value: 
+      objectReference: {fileID: 11400000, guid: 1e9f23e65218bb34ba3730c3a6c0d4e8,
+        type: 2}
+    - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
+        type: 3}
+      propertyPath: tileTypesInDeck.Array.data[2].tileData
       value: 
       objectReference: {fileID: 11400000, guid: 07fdb1da469b88b4f9c6956decf80789,
         type: 2}
+    - target: {fileID: 8728682107459921079, guid: a1613c9d474a4e54f9621aa084ee7a98,
+        type: 3}
+      propertyPath: tileTypesInDeck.Array.data[3].tileData
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
