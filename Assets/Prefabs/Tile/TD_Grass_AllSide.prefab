@@ -48,12 +48,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   edgeRenderers:
-  - {fileID: 6095243013835857418}
   - {fileID: 8312476957996151919}
   - {fileID: 5226657233476454300}
   - {fileID: 4884381199858707250}
   - {fileID: 9165741522883998723}
   - {fileID: 3566335502197654434}
+  - {fileID: 6095243013835857418}
   highlightMaterial: {fileID: 2100000, guid: 978a7cc46d746c74fb172ae97ee94d98, type: 2}
 --- !u!23 &5502512029244311652
 MeshRenderer:

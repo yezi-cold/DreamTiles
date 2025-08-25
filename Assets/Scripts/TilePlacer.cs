@@ -149,6 +149,7 @@ public class TilePlacer : MonoBehaviour
 
     #region Ghost Outline Logic
     //处理幽灵边框的显示和更新
+    //处理幽灵边框的显示和更新
     private void HandleGhostHexOutlines()
     {
         HideAllHexOutlines();//隐藏所有边框
@@ -156,22 +157,24 @@ public class TilePlacer : MonoBehaviour
         if (currentTileToPlace == null) return;//如果没有牌，就不用显示边框。
 
         HashSet<HexCoord> potentialCoords = GetPotentialPlacementCoords();//获取所有潜在的放置位置
-        
-        
-        foreach (HexCoord coord in potentialCoords)//遍历所有潜在的放置位置
+
+        foreach (HexCoord coord in potentialCoords)
         {
-            TileData rotatedTileData = GetRotatedTileData(currentTileToPlace, currentTileRotationIndex);//获取旋转后的牌
-            bool canPlace = gridManager.CanPlaceTile(coord, rotatedTileData);//根据网格管理器的规则判断是否可以放置
-            //克隆边框预制体
-            GameObject outline = Instantiate(ghostHexOutlinePrefab, gridManager.HexToWorld(coord), Quaternion.identity, this.transform);
-           
-            outline.transform.localScale = Vector3.one * gridManager.TileSize;//设置边框的大小
+            TileData rotatedTileData = gridManager.GetRotatedTileData(currentTileToPlace, currentTileRotationIndex);
+            bool canPlace = gridManager.CanPlaceTile(coord, rotatedTileData);
+            Destroy(rotatedTileData); // 销毁为本次检查创建的临时数据
 
-            MeshRenderer renderer = outline.GetComponent<MeshRenderer>();//获取边框的渲染器
-           
-            renderer.material = canPlace ? hexOutlineValidMaterial : hexOutlineInvalidMaterial;//设置边框的材质
+            // 新的视觉逻辑：只有在 canPlace 为 true 时，才显示边框
+            if (canPlace)
+            {
+                GameObject outline = Instantiate(ghostHexOutlinePrefab, gridManager.HexToWorld(coord), Quaternion.identity, this.transform);
+                outline.transform.localScale = Vector3.one * gridManager.TileSize;
+                MeshRenderer renderer = outline.GetComponent<MeshRenderer>();
 
-            activeHexOutlines.Add(outline);//添加到激活边框列表中
+                // 因为只显示有效的，所以我们只使用 valid material
+                renderer.material = hexOutlineValidMaterial;
+                activeHexOutlines.Add(outline);
+            }
         }
     }
 
@@ -221,7 +224,7 @@ public class TilePlacer : MonoBehaviour
     private void TryPlaceTile(HexCoord targetCoord)
     {
         //获取旋转后的牌
-        TileData rotatedTileData = GetRotatedTileData(currentTileToPlace, currentTileRotationIndex);
+        TileData rotatedTileData = gridManager.GetRotatedTileData(currentTileToPlace, currentTileRotationIndex);
 
         if (gridManager.CanPlaceTile(targetCoord, rotatedTileData))//如果网格管理器允许放置，就放置牌
         {
@@ -230,24 +233,12 @@ public class TilePlacer : MonoBehaviour
         else
         {
             Debug.Log("Cannot place tile here.");
+            // 在这里销毁，因为 SpawnTile 没有被调用，它没被用上
+            Destroy(rotatedTileData);
         }
     }
 
-    //获取旋转后的牌
-    private TileData GetRotatedTileData(TileData originalTileData, int rotation)
-    {
-        TileData rotatedData = ScriptableObject.CreateInstance<TileData>();//克隆牌数据
-        rotatedData.name = originalTileData.name + "_Rotated";//给旋转后的牌一个新的名字
-        rotatedData.tilePrefab = originalTileData.tilePrefab;//设置旋转后的牌的预制体
-        rotatedData.tileType = originalTileData.tileType;//设置旋转后的牌的类型
-        rotatedData.edges = new EdgeType[NUM_HEX_DIRECTIONS];//设置旋转后的牌的边类型
-        for (int i = 0; i < NUM_HEX_DIRECTIONS; i++)//遍历六个方向
-        {
-            int originalIndex = (i - rotation + NUM_HEX_DIRECTIONS) % NUM_HEX_DIRECTIONS;//计算原始边的索引
-            rotatedData.edges[i] = originalTileData.edges[originalIndex];//设置旋转后的边类型
-        }
-        return rotatedData;//返回旋转后的牌数据
-    }
+
     #endregion
 
     #region Material Blending Utility

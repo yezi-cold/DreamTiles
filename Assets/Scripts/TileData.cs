@@ -10,6 +10,7 @@ public enum EdgeType//定义 边的类型
     Water = 3,//水
     House = 4,//房子
     Factory = 5,//工厂
+    Road = 6,//道路
 }
 
 public enum TileType//定义地块的主体类型

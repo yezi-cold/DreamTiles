@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 /*网格管理器
 是游戏的核心逻辑之一，负责管理场景中所有地块的位置、生成和数据存储。
@@ -17,6 +18,10 @@ public class GridManager : MonoBehaviour
     //私有字典，这是网格的核心数据结构
     //键是六边形的坐标，值是对应坐标上的 TileController 实例
     private Dictionary<HexCoord, TileController> grid = new Dictionary<HexCoord, TileController>();
+
+    //用于追踪特殊地块 
+    private bool riverPlaced = false; // 是否已经放置过河流地块
+    private bool roadPlaced = false;  // 是否已经放置过道路地块
 
     //--属性--
     public float TileSize => tileSize; // 公共只读属性，让其他脚本可以安全地获取tileSize的值。
@@ -64,6 +69,18 @@ public class GridManager : MonoBehaviour
 
         //将新生成的地块添加到网格字典中
         grid.Add(coord, newTileController);
+
+        // 在放置成功后，更新特殊地块的追踪状态 
+        if (!riverPlaced && tileData.edges.Contains(EdgeType.Water))
+        {
+            riverPlaced = true;
+            Debug.Log("第一条河流已被放置!");
+        }
+        if (!roadPlaced && tileData.edges.Contains(EdgeType.Road))
+        {
+            roadPlaced = true;
+            Debug.Log("第一条道路已被放置!");
+        }
 
         //调用calculateMatchedEdges方法计算新地块与邻居匹配的边数。
         int matchedEdges = CalculateMatchedEdges(coord, tileData);
@@ -115,28 +132,56 @@ public class GridManager : MonoBehaviour
     //检查地块是否可以放置在目标坐标的核心逻辑
     public bool CanPlaceTile(HexCoord targetCoord, TileData tileToPlace)
     {
-        // 规则1：目标位置不能已有地块
-        if (HasTileAt(targetCoord)) return false;
-
-        // 规则2：如果是第一个地块，必须放在原点 (0,0)
-        if (GetAllPlacedTileCoords().Count == 0)
+        // 基础条件1：当前位置没有地块
+        if (HasTileAt(targetCoord))
         {
-            return targetCoord == HexCoord.zero;
+            return false;
         }
 
-        // 规则3：必须与一个已放置的地块相邻
-        bool hasAdjacentTile = false;
+        // 基础条件2：相邻处必须有地块
+        bool hasNeighbor = false;
         for (int i = 0; i < 6; i++)
         {
             if (HasTileAt(targetCoord.GetNeighbor(i)))
             {
-                hasAdjacentTile = true;
-                break; // 只要找到一个邻居就满足条件，跳出循环。
+                hasNeighbor = true;
+                break;
             }
         }
-        if (!hasAdjacentTile) return false;
+        // 如果是游戏刚开始（只有初始地块），则必须放在原点旁边
+        // 如果已经有很多地块了，则不能凭空放置
+        if (!hasNeighbor && grid.Count > 1)
+        {
+            return false;
+        }
+        // 处理第一块紧挨着初始地块的情况
+        if (grid.Count == 1 && !hasNeighbor)
+        {
+            return false;
+        }
 
-        // 规则4：所有相邻的边必须匹配
+
+        // --- 特殊地块放置要求 ---
+        bool hasRiverEdge = tileToPlace.edges.Contains(EdgeType.Water);
+        bool hasRoadEdge = tileToPlace.edges.Contains(EdgeType.Road);
+
+        // 如果是普通地块，只要满足基础条件即可
+        if (!hasRiverEdge && !hasRoadEdge)
+        {
+            return true;
+        }
+
+        // 如果是特殊地块，检查是否是第一次出现
+        if (hasRiverEdge && !riverPlaced)
+        {
+            return true; // 第一个河流地块，可以随意放置
+        }
+        if (hasRoadEdge && !roadPlaced)
+        {
+            return true; // 第一个道路地块，可以随意放置
+        }
+
+        // 如果是第二次及以后出现的特殊地块，必须找到匹配的邻居
         for (int i = 0; i < 6; i++)
         {
             HexCoord neighborCoord = targetCoord.GetNeighbor(i);
@@ -146,17 +191,25 @@ public class GridManager : MonoBehaviour
                 EdgeType newTileEdge = tileToPlace.edges[i];
                 EdgeType neighborOppositeEdge = neighborTile.GetOppositeEdgeType((HexDirection)i);
 
-                if (newTileEdge != EdgeType.None && neighborOppositeEdge != EdgeType.None)
+                // 检查河流连接
+                if (hasRiverEdge && newTileEdge == EdgeType.Water && neighborOppositeEdge == EdgeType.Water)
                 {
-                    if (newTileEdge != neighborOppositeEdge) return false; // 如果两边都有定义但不匹配，则不能放置。
+                    return true; // 找到了一个有效的河流连接点
+                }
+                // 检查道路连接
+                if (hasRoadEdge && newTileEdge == EdgeType.Road && neighborOppositeEdge == EdgeType.Road)
+                {
+                    return true; // 找到了一个有效的道路连接点
                 }
             }
         }
-        return true; // 所有规则都通过，返回true。
+
+        // 遍历完所有邻居，都没有找到必须的连接点
+        return false;
     }
 
     // -- 私有辅助方法 --
-    private int CalculateMatchedEdges(HexCoord placedCoord, TileData placedTileData)
+    private int CalculateMatchedEdges(HexCoord placedCoord, TileData tileToPlace)
     {
         int matchedCount = 0;//局部变量，用于计数
         for (int i = 0; i < 6; i++)
@@ -170,10 +223,10 @@ public class GridManager : MonoBehaviour
                 TileController neighborTile = GetTileAt(neighborCoord);
 
                 // 获取新地块在这个方向的边缘类型
-                EdgeType newTileEdge = placedTileData.edges[(int)currentDir];
+                EdgeType newTileEdge = tileToPlace.edges[i];
 
                 // 获取邻居地块在相反方向的边缘类型
-                EdgeType neighborOppositeEdge = neighborTile.GetOppositeEdgeType(currentDir);
+                EdgeType neighborOppositeEdge = neighborTile.GetOppositeEdgeType((HexDirection)i);
 
                 // 如果边缘匹配 (注意这里的逻辑与 CanPlaceTile 略有不同，CanPlaceTile 是严格的，这里是计算匹配数量)
                 // 只有当两者类型完全一致且都有定义，才算作完美匹配
@@ -215,7 +268,22 @@ public class GridManager : MonoBehaviour
 
         return new HexCoord(rx, ry);
     }
+    //获取旋转后的牌
+    public TileData GetRotatedTileData(TileData originalTileData, int rotation)
+    {
+        TileData rotatedData = ScriptableObject.CreateInstance<TileData>();//克隆牌数据
+        rotatedData.name = originalTileData.name + "_Rotated";//给旋转后的牌一个新的名字
+        rotatedData.tilePrefab = originalTileData.tilePrefab;//设置旋转后的牌的预制体
+        rotatedData.tileType = originalTileData.tileType;//设置旋转后的牌的类型
 
+        const int NUM_HEX_DIRECTIONS = 6;
+        rotatedData.edges = new EdgeType[NUM_HEX_DIRECTIONS];//设置旋转后的牌的边类型
+        for (int i = 0; i < NUM_HEX_DIRECTIONS; i++)//遍历六个方向
+        {
+            int originalIndex = (i - rotation + NUM_HEX_DIRECTIONS) % NUM_HEX_DIRECTIONS;//计算原始边的索引
+            rotatedData.edges[i] = originalTileData.edges[originalIndex];//设置旋转后的边类型
+        }
+        return rotatedData;//返回旋转后的牌数据
+    }
 
-    
 }

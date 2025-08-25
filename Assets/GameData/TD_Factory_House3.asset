@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d8086aa2a94744b43b90439fda02567e, type: 3}
-  m_Name: TD_Factory_AllSide
+  m_Name: TD_Factory_House3
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 5908714255672461975, guid: ca9e1c5d5918f1e4b82d0bd6e0a005f2,
+  tilePrefab: {fileID: 7481626318882820368, guid: b0e263acbd77dbf4283bd243fb5b8e0c,
     type: 3}
-  tileType: 0
+  tileType: 3
   baseScore: 1
-  edges: 050000000500000005000000050000000500000005000000
+  edges: 040000000400000004000000050000000500000005000000
