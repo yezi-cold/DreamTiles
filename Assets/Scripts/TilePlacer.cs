@@ -104,6 +104,15 @@ public class TilePlacer : MonoBehaviour
     }
 
     //--私有方法--
+    private bool CheckIfConnectionGeneratesScore(EdgeType edgeA, EdgeType edgeB)
+    {
+        // 查询计分规则表
+        ScoreModifier modifier = ScoreManager.Instance.GetAdjacencyBonus(edgeA, edgeB);
+
+        // 只要任何一个分数有变化（无论是正还是负），就认为产生了分数，需要高亮
+        return modifier.prosperity != 0 || modifier.population != 0 || modifier.happiness != 0;
+    }
+
     private void UpdateGhostPreviews()//更新幽灵显示状态
     {
         HandleGhostTile();//更新幽灵地块跟随鼠标
@@ -149,32 +158,43 @@ public class TilePlacer : MonoBehaviour
 
     #region Ghost Outline Logic
     //处理幽灵边框的显示和更新
-    //处理幽灵边框的显示和更新
     private void HandleGhostHexOutlines()
     {
-        HideAllHexOutlines();//隐藏所有边框
+        HideAllHexOutlines(); // 首先隐藏所有旧的边框
 
-        if (currentTileToPlace == null) return;//如果没有牌，就不用显示边框。
+        if (currentTileToPlace == null) return; // 如果手上没牌，就什么都不做
 
-        HashSet<HexCoord> potentialCoords = GetPotentialPlacementCoords();//获取所有潜在的放置位置
+        // 获取所有可能放置地块的坐标
+        HashSet<HexCoord> potentialCoords = GetPotentialPlacementCoords();
 
+        // 遍历每一个潜在坐标
         foreach (HexCoord coord in potentialCoords)
         {
+            // 为本次检查创建一个临时的旋转后地块数据
             TileData rotatedTileData = gridManager.GetRotatedTileData(currentTileToPlace, currentTileRotationIndex);
+
+            // 询问 GridManager 在这个坐标是否可以放置
             bool canPlace = gridManager.CanPlaceTile(coord, rotatedTileData);
-            Destroy(rotatedTileData); // 销毁为本次检查创建的临时数据
 
-            // 新的视觉逻辑：只有在 canPlace 为 true 时，才显示边框
-            if (canPlace)
+            // 检查完毕后，销毁临时的地块数据以防内存泄漏
+            Destroy(rotatedTileData);
+
+            // 如果没有设置幽灵边框的预制体，就跳过以防报错
+            if (ghostHexOutlinePrefab == null) continue;
+
+            // 在潜在坐标处实例化一个新的幽灵边框
+            GameObject outlineInstance = Instantiate(ghostHexOutlinePrefab, gridManager.HexToWorld(coord), Quaternion.identity, this.transform);
+
+            // 获取它的网格渲染器组件
+            MeshRenderer outlineRenderer = outlineInstance.GetComponent<MeshRenderer>();
+            if (outlineRenderer != null)
             {
-                GameObject outline = Instantiate(ghostHexOutlinePrefab, gridManager.HexToWorld(coord), Quaternion.identity, this.transform);
-                outline.transform.localScale = Vector3.one * gridManager.TileSize;
-                MeshRenderer renderer = outline.GetComponent<MeshRenderer>();
-
-                // 因为只显示有效的，所以我们只使用 valid material
-                renderer.material = hexOutlineValidMaterial;
-                activeHexOutlines.Add(outline);
+                // 根据是否可以放置，设置不同的材质（从而显示不同颜色）
+                outlineRenderer.material = canPlace ? hexOutlineValidMaterial : hexOutlineInvalidMaterial;
             }
+
+            // 将新创建的边框实例加入列表，方便下次统一隐藏
+            activeHexOutlines.Add(outlineInstance);
         }
     }
 
@@ -228,7 +248,7 @@ public class TilePlacer : MonoBehaviour
 
         if (gridManager.CanPlaceTile(targetCoord, rotatedTileData))//如果网格管理器允许放置，就放置牌
         {
-            gridManager.SpawnTile(targetCoord, rotatedTileData, currentTileRotationIndex);//生成地块
+            gridManager.SpawnTile(targetCoord, currentTileToPlace, currentTileRotationIndex);//生成地块
         }
         else
         {
@@ -237,8 +257,6 @@ public class TilePlacer : MonoBehaviour
             Destroy(rotatedTileData);
         }
     }
-
-
     #endregion
 
     #region Material Blending Utility

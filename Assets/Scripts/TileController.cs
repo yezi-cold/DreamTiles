@@ -98,4 +98,26 @@ public class TileController : MonoBehaviour
             SetEdgeHighlight((HexDirection)i, false);
         }
     }
+    /// <summary>
+    /// 获取与指定“世界方向”相反的边缘类型，会考虑地块自身的旋转。
+    /// </summary>
+    /// <param name="worldDirection">来自外部的世界方向</param>
+    /// <returns>该地块在接触面上对应的边缘类型</returns>
+    public EdgeType GetOppositeEdgeTypeInWorld(HexDirection worldDirection)
+    {
+        // 1. 从游戏对象的 Transform 组件获取当前地块的旋转索引
+        // 我们假设地块的Y轴旋转总是60度的整数倍
+        int rotationIndex = Mathf.RoundToInt(transform.rotation.eulerAngles.y / 60) % 6;
+
+        // 2. 计算出世界坐标中的“相反”方向
+        // 在六边形网格中，相反方向的索引总是当前方向 + 3
+        int oppositeWorldDirIndex = ((int)worldDirection + 3) % 6;
+
+        // 3. 将这个“相反的世界方向”转换为地块自身的“本地边缘索引”
+        // 逻辑和 TileData 中的方法一样
+        int localEdgeIndex = (oppositeWorldDirIndex - rotationIndex + 6) % 6;
+
+        // 4. 从地块数据中返回正确的边缘类型
+        return TileData.edges[localEdgeIndex];
+    }
 }

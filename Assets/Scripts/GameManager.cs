@@ -32,11 +32,8 @@ public class GameManager : MonoBehaviour
     // --- 公开的协调方法 ---
 
     // 当地块被成功放置后，由GridManager调用
-    public void OnTilePlaced(HexCoord coord, TileData tileData, int matchedEdgesCount)
+    public void OnTilePlaced()
     {
-        // 协调1：通知ScoreManager计分
-        scoreManager.ScoreTilePlacement(tileData, matchedEdgesCount);
-
         // 协调2：通知TileDeckManager抽下一张牌
         tileDeckManager.DrawNewTile();
     }

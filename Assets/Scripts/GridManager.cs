@@ -43,11 +43,6 @@ public class GridManager : MonoBehaviour
     //在指定坐标生成一个地块。
     public TileController SpawnTile(HexCoord coord, TileData tileData, int rotationIndex)
     {
-        if (tileData.tilePrefab == null)//检查地块数据中是否有关联的预制体。
-        {
-            Debug.LogError($"Tile Prefab is not set for {tileData.name}!");
-            return null;//如果没有，打印错误返回null
-        }
         // --- 局部变量 ---
         Vector3 worldPosition = HexToWorld(coord); // 将六边形网格坐标转换为Unity世界坐标。
         Quaternion worldRotation = Quaternion.Euler(0, rotationIndex * 60, 0); // 根据旋转索引计算世界旋转角度。
@@ -57,6 +52,13 @@ public class GridManager : MonoBehaviour
 
         // 获取新地块上的 TileController 组件，并调用其 Initialize 方法
         TileController newTileController = newTileGO.GetComponent<TileController>();
+
+        if (tileData.tilePrefab == null)//检查地块数据中是否有关联的预制体。
+        {
+            Debug.LogError($"Tile Prefab is not set for {tileData.name}!");
+            return null;//如果没有，打印错误返回null
+        }
+
         if (newTileController == null)
         {
             Debug.LogError("HexTile_Prefab is missing TileController component!");
@@ -71,7 +73,7 @@ public class GridManager : MonoBehaviour
         grid.Add(coord, newTileController);
 
         // 在放置成功后，更新特殊地块的追踪状态 
-        if (!riverPlaced && tileData.edges.Contains(EdgeType.Water))
+        if (!riverPlaced && tileData.edges.Contains(EdgeType.River))
         {
             riverPlaced = true;
             Debug.Log("第一条河流已被放置!");
@@ -81,13 +83,10 @@ public class GridManager : MonoBehaviour
             roadPlaced = true;
             Debug.Log("第一条道路已被放置!");
         }
+        // ▼▼▼ 【新增】调用新的计分方法 ▼▼▼
+        CalculateAndAddScores(coord, tileData, rotationIndex);
 
-        //调用calculateMatchedEdges方法计算新地块与邻居匹配的边数。
-        int matchedEdges = CalculateMatchedEdges(coord, tileData);
-
-        // 通知GameManager地块已放置，并传递相关信息。GameManager会负责后续的计分和抽牌流程。
-        GameManager.Instance.OnTilePlaced(coord, tileData, matchedEdges);
-        return newTileController; // 返回新创建的地块控制器实例。
+        return newTileController;
     }
 
     //将六边形坐标转换为unity世界坐标
@@ -162,7 +161,7 @@ public class GridManager : MonoBehaviour
 
 
         // --- 特殊地块放置要求 ---
-        bool hasRiverEdge = tileToPlace.edges.Contains(EdgeType.Water);
+        bool hasRiverEdge = tileToPlace.edges.Contains(EdgeType.River);
         bool hasRoadEdge = tileToPlace.edges.Contains(EdgeType.Road);
 
         // 如果是普通地块，只要满足基础条件即可
@@ -189,10 +188,10 @@ public class GridManager : MonoBehaviour
             {
                 TileController neighborTile = GetTileAt(neighborCoord);
                 EdgeType newTileEdge = tileToPlace.edges[i];
-                EdgeType neighborOppositeEdge = neighborTile.GetOppositeEdgeType((HexDirection)i);
+                EdgeType neighborOppositeEdge = neighborTile.GetOppositeEdgeTypeInWorld((HexDirection)i);
 
                 // 检查河流连接
-                if (hasRiverEdge && newTileEdge == EdgeType.Water && neighborOppositeEdge == EdgeType.Water)
+                if (hasRiverEdge && newTileEdge == EdgeType.River && neighborOppositeEdge == EdgeType.River)
                 {
                     return true; // 找到了一个有效的河流连接点
                 }
@@ -209,35 +208,45 @@ public class GridManager : MonoBehaviour
     }
 
     // -- 私有辅助方法 --
-    private int CalculateMatchedEdges(HexCoord placedCoord, TileData tileToPlace)
+    // ▼▼▼ 【核心新增方法】根据你的规则计算并添加分数 ▼▼▼
+    private void CalculateAndAddScores(HexCoord placedCoord, TileData placedTileData, int rotationIndex)
     {
-        int matchedCount = 0;//局部变量，用于计数
+        //创建临时的分数容器，初始都为0
+        int prosperityDelta = 0;
+        int populationDelta = 0;
+        int happinessDelta = 0;
+
+        // 遍历6个方向的邻居，检查每条接触边的类型
         for (int i = 0; i < 6; i++)
         {
-            HexDirection currentDir = (HexDirection)i;
+            //获取当前方向邻居坐标
             HexCoord neighborCoord = placedCoord.GetNeighbor(i);
-
-            // 检查这个方向是否有邻居
+            //检查这个方向是否有邻居
             if (HasTileAt(neighborCoord))
             {
                 TileController neighborTile = GetTileAt(neighborCoord);
 
-                // 获取新地块在这个方向的边缘类型
-                EdgeType newTileEdge = tileToPlace.edges[i];
+                // 获取新地块在当前世界方向(i)的边缘类型
+                EdgeType newTileEdge = placedTileData.GetEdgeForWorldDirection(i, rotationIndex);
 
-                // 获取邻居地块在相反方向的边缘类型
-                EdgeType neighborOppositeEdge = neighborTile.GetOppositeEdgeType((HexDirection)i);
+                // 获取邻居地块与我们接触的那条边的边缘类型
+                EdgeType neighborOppositeEdge = neighborTile.GetOppositeEdgeTypeInWorld((HexDirection)i);
 
-                // 如果边缘匹配 (注意这里的逻辑与 CanPlaceTile 略有不同，CanPlaceTile 是严格的，这里是计算匹配数量)
-                // 只有当两者类型完全一致且都有定义，才算作完美匹配
-                if (newTileEdge != EdgeType.None && neighborOppositeEdge != EdgeType.None &&
-                    newTileEdge == neighborOppositeEdge) // 注意这里是 ==
-                {
-                    matchedCount++;//匹配数加1
-                }
+                // 查询ScoreManager的规则表，获取这对边缘连接的分数
+                ScoreModifier modifier = ScoreManager.Instance.GetAdjacencyBonus(newTileEdge, neighborOppositeEdge);
+
+                // 累加从规则中获得的分数
+                prosperityDelta += modifier.prosperity;
+                populationDelta += modifier.population;
+                happinessDelta += modifier.happiness;
             }
         }
-        return matchedCount;
+
+        // 将计算出的总增量分数添加到ScoreManager
+        ScoreManager.Instance.AddScores(prosperityDelta, populationDelta, happinessDelta);
+
+        // 通知GameManager地块已放置，现在只负责触发抽牌
+        GameManager.Instance.OnTilePlaced();
     }
 
     //对浮点六边形坐标进行四舍五入，得到整数坐标。
@@ -274,7 +283,7 @@ public class GridManager : MonoBehaviour
         TileData rotatedData = ScriptableObject.CreateInstance<TileData>();//克隆牌数据
         rotatedData.name = originalTileData.name + "_Rotated";//给旋转后的牌一个新的名字
         rotatedData.tilePrefab = originalTileData.tilePrefab;//设置旋转后的牌的预制体
-        rotatedData.tileType = originalTileData.tileType;//设置旋转后的牌的类型
+        rotatedData.edgeType = originalTileData.edgeType;//设置旋转后的牌的类型
 
         const int NUM_HEX_DIRECTIONS = 6;
         rotatedData.edges = new EdgeType[NUM_HEX_DIRECTIONS];//设置旋转后的牌的边类型

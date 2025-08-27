@@ -53,12 +53,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   edgeRenderers:
-  - {fileID: 1901451093052782077}
-  - {fileID: 2427518807655155214}
-  - {fileID: 3094070402161715872}
   - {fileID: 1588599877376865681}
-  - {fileID: 6360979674290553392}
+  - {fileID: 3094070402161715872}
+  - {fileID: 2427518807655155214}
+  - {fileID: 1901451093052782077}
   - {fileID: 4444544082610790296}
+  - {fileID: 6360979674290553392}
   highlightMaterial: {fileID: 2100000, guid: 978a7cc46d746c74fb172ae97ee94d98, type: 2}
 --- !u!23 &7143187893689171074
 MeshRenderer:
@@ -446,6 +446,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: edge
+      objectReference: {fileID: 0}
+    - target: {fileID: 4790297095022774674, guid: 9129f36149042a44b892bee67672d999,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6741873491134408018, guid: 9129f36149042a44b892bee67672d999,
         type: 3}
